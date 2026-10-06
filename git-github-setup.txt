@@ -1,0 +1,57 @@
+GitHub 接続手順（testapp）
+実施日: 2026-10-06
+作業場所: WSL Ubuntu /home/yana/testapp
+
+目的
+  既存の GitHub リポジトリ https://github.com/panax510/testapp.git
+  に、このローカルフォルダを接続する。
+
+事前の状態
+  - このフォルダは Git リポジトリではなかった（.git なし）
+  - GitHub CLI（gh）は未インストール
+  - Git 自体は利用可能だった
+      Windows: C:\Program Files\Git\cmd\git.exe
+      WSL: /usr/bin/git（git version 2.53.0）
+  - Git のユーザー設定は済み
+      user.name = RyoYana
+      user.email = peace13maker@gmail.com
+
+接続先
+  リポジトリ: https://github.com/panax510/testapp.git
+  ブランチ: main
+  リモート側の内容: Initial commit（ほぼ .gitignore のみ）
+
+実施したコマンド（WSL Ubuntu）
+
+  1. リポジトリを初期化する
+     git init -b main
+
+  2. GitHub を origin として登録する
+     git remote add origin https://github.com/panax510/testapp.git
+
+  3. リモートに届くか確認する
+     git remote -v
+     git ls-remote origin
+     （結果: origin/main のコミット 661290d を確認できた）
+
+  4. リモートの履歴を取得する
+     git fetch origin
+
+  5. ローカルの main を origin/main に合わせ、追跡設定する
+     ローカルに未追跡の .gitignore があり、そのまま checkout すると上書きされるため、
+     いったん退避してから checkout し、Laravel 用の .gitignore を戻した。
+
+     mv .gitignore .gitignore.local.bak
+     git checkout -B main --track origin/main
+     mv .gitignore.local.bak .gitignore
+
+実施しなかったこと
+  - アプリ本体のコミット
+  - GitHub への push
+  - GitHub CLI（gh）のインストール
+
+接続後の状態
+  - ブランチ: main（origin/main を追跡）
+  - remote origin = https://github.com/panax510/testapp.git
+  - Laravel のソースは未コミット（untracked / .gitignore は modified）
+  - 以降はコミット後に git push すれば GitHub へ送れる
